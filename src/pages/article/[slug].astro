@@ -2,7 +2,6 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Placeholder from '../../components/Placeholder.astro';
 import Newsletter from '../../components/Newsletter.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
@@ -69,14 +68,6 @@ const jsonLd = {
   </Fragment>
 
   <div class="pad">
-    <Breadcrumbs
-      items={[
-        { label: 'Начало', href: '/' },
-        { label: category.label, href: `/category/${category.slug}/` },
-        { label: article.data.title }
-      ]}
-    />
-
     <header class="art-head">
       <p class="lab">{article.data.badge ?? category.label}</p>
       <h1 class="art-title">{article.data.title}</h1>
