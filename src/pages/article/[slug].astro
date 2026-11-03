@@ -1,0 +1,135 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import {
+  getArticles,
+  articleUrl,
+  formatDate,
+  isoDate,
+  readingMinutes,
+  relatedArticles,
+  type Article
+} from '../../lib/articles';
+import { getCategory, site } from '../../data/site';
+
+interface Props {
+  article: Article;
+}
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article }
+  }));
+}
+
+const { article } = Astro.props;
+const category = getCategory(article.data.category);
+const { Content } = await render(article);
+const related = relatedArticles(await getArticles(), article);
+const href = articleUrl(article);
+const minutes = readingMinutes(article);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.data.title,
+  description: article.data.standfirst,
+  datePublished: isoDate(article.data.publishedAt),
+  dateModified: isoDate(article.data.updatedAt ?? article.data.publishedAt),
+  inLanguage: 'bg-BG',
+  articleSection: category.label,
+  author: {
+    '@type': 'Person',
+    name: article.data.author
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: site.name
+  },
+  mainEntityOfPage: new URL(href, Astro.site).href,
+  image: article.data.heroSrc ? new URL(article.data.heroSrc, Astro.site).href : undefined
+};
+---
+
+<Base
+  title={article.data.title}
+  description={article.data.standfirst}
+  image={article.data.heroSrc}
+  type="article"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+  </Fragment>
+
+  <div class="pad">
+    <Breadcrumbs
+      items={[
+        { label: 'Начало', href: '/' },
+        { label: category.label, href: `/category/${category.slug}/` },
+        { label: article.data.title }
+      ]}
+    />
+
+    <header class="art-head">
+      <p class="lab">{article.data.badge ?? category.label}</p>
+      <h1 class="art-title">{article.data.title}</h1>
+      <p class="art-dek">{article.data.standfirst}</p>
+      <div class="art-byline">
+        <span class="author">{article.data.author}</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>{formatDate(article.data.publishedAt)}</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>{minutes} мин четене</span>
+      </div>
+    </header>
+
+    <div class="art-hero">
+      <Placeholder
+        note={article.data.heroNote}
+        alt={article.data.heroAlt}
+        src={article.data.heroSrc}
+        caption={article.data.heroCaption}
+        credit={article.data.heroCredit}
+        ratio="16 / 9"
+        eager
+      />
+    </div>
+
+    <article class="art-body">
+      <Content />
+    </article>
+
+    <div class="art-foot">
+      <div class="art-tags">
+        {article.data.tags.map((tag) => <span class="chip">{tag}</span>)}
+      </div>
+      <a class="tlink" href={`/category/${category.slug}/`}>Още от {category.label}</a>
+    </div>
+
+    <div class="author-note">
+      <div>
+        <span class="name">{article.data.author}</span>
+        <p>
+          {article.data.authorRole ?? 'Автор в Болярин'} · Пише за нещата, които изискват време.
+        </p>
+      </div>
+      <a class="tlink" href="/latest/">Всички материали</a>
+    </div>
+
+    <section class="next-read">
+      <SectionHeader title="Още за четене" href="/latest/" />
+      <div class="three">
+        {related.map((item) => <ArticleCard article={item} showDek />)}
+      </div>
+    </section>
+
+    <Newsletter />
+  </div>
+</Base>

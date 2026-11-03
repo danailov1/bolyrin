@@ -1,0 +1,28 @@
+---
+interface Props {
+  kicker?: string;
+  title?: string;
+  text?: string;
+  cta?: string;
+  href?: string;
+}
+
+const {
+  kicker = 'Клуб',
+  title = 'Болярин',
+  text = 'Две издания годишно, затворен клуб и материали, които не се публикуват никъде другаде.',
+  cta = 'Влез в клуба',
+  href = '/klub/'
+} = Astro.props;
+---
+
+<aside class="promo">
+  <div>
+    <em>{kicker}</em>
+    <b>{title}</b>
+  </div>
+  <div>
+    <p class="small">{text}</p>
+    <a class="btn pill" href={href}>{cta}</a>
+  </div>
+</aside>

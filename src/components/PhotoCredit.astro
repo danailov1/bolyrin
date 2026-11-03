@@ -1,0 +1,32 @@
+---
+import { getImageCredit } from '../data/image-credits';
+
+interface Props {
+  src?: string;
+  credit?: string;
+}
+
+const { src, credit } = Astro.props;
+const meta = getImageCredit(src);
+---
+
+{
+  credit ? (
+    <span class="credit">{credit}</span>
+  ) : meta ? (
+    <span class="credit">
+      Снимка:{' '}
+      <a href={meta.sourceUrl} target="_blank" rel="noopener noreferrer">
+        {meta.author}
+      </a>
+      {' · '}
+      {meta.licenseUrl ? (
+        <a href={meta.licenseUrl} target="_blank" rel="noopener noreferrer">
+          {meta.license}
+        </a>
+      ) : (
+        meta.license
+      )}
+    </span>
+  ) : null
+}

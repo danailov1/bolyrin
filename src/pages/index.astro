@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Promo from '../components/Promo.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Newsletter from '../components/Newsletter.astro';
+import PullQuote from '../components/PullQuote.astro';
+import { getArticles, pickArticle } from '../lib/articles';
+import { site } from '../data/site';
+
+const all = await getArticles();
+const lead = pickArticle(all, 'oxfordskata-obuvka');
+const editorsPick = pickArticle(all, 'pet-veshti-za-sezona');
+const latest = [
+  pickArticle(all, 'mehanichnoto-sarce'),
+  pickArticle(all, 'rakiyata-na-dyado-mi'),
+  pickArticle(all, 'izkustvoto-da-pristignesh-navreme')
+];
+const heritage = [
+  pickArticle(all, 'zanaqchiyska-sofia'),
+  pickArticle(all, 'tamnosinoto-sako')
+];
+const season = [
+  pickArticle(all, 'patyat-kam-rodopite'),
+  pickArticle(all, 'kashtata-koyato-pomni'),
+  pickArticle(all, 'formata-najivyava')
+];
+const culture = [
+  pickArticle(all, 'antikvaryat-ot-rakovski'),
+  pickArticle(all, 'knigata-na-noshtnoto-shkafche'),
+  pickArticle(all, 'bavnoto-e-noviyat-luks')
+];
+---
+
+<Base title={site.name} description={site.description}>
+  <section class="pad hero">
+    <ArticleCard article={lead} variant="over" eager />
+  </section>
+
+  <section class="pad picks" aria-label="Избор на редактора">
+    <ArticleCard article={editorsPick} variant="split" eager />
+    <Promo />
+  </section>
+
+  <section class="pad latest" aria-label="Последни материали">
+    {latest.map((article) => <ArticleCard article={article} />)}
+  </section>
+
+  <section class="pad two band">
+    <div>
+      <SectionHeader title="Наследство" href="/category/nasledstvo/" />
+      {heritage.map((article) => <ArticleCard article={article} variant="row" />)}
+    </div>
+    <PullQuote source="Майстор шивач, София">
+      „Костюмът не се бърза. Бърза се само това, което не си струва.“
+    </PullQuote>
+  </section>
+
+  <section class="pad band">
+    <SectionHeader title="Сезонът" href="/latest/" />
+    <div class="three">
+      {season.map((article) => <ArticleCard article={article} showDek />)}
+    </div>
+  </section>
+
+  <section class="pad two band">
+    <div>
+      <SectionHeader title="Култура" href="/category/kultura/" />
+      <ArticleCard article={culture[0]} variant="split" />
+      <div style="margin-top: 28px;">
+        {culture.slice(1).map((article) => <ArticleCard article={article} variant="row" />)}
+      </div>
+    </div>
+    <div>
+      <SectionHeader title="Бавното" href="/klub/" linkLabel="Клуб Болярин" />
+      <Promo
+        kicker="Издание"
+        title="Брой 07"
+        text="Есен и зима 2026. 180 страници за нещата, които остават — от обувките, които се поправят, до къщите, които не се подменят."
+        cta="Виж броя"
+        href="/klub/#izdania"
+      />
+    </div>
+  </section>
+
+  <div class="pad">
+    <Newsletter />
+  </div>
+</Base>

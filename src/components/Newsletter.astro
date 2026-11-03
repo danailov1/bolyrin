@@ -1,0 +1,34 @@
+---
+interface Props {
+  title?: string;
+  text?: string;
+}
+
+const {
+  title = 'Едно писмо в петък. Нищо повече.',
+  text = 'Най-доброто от седмицата: един дълъг текст, една вещ и една бутилка. Без шум, без ежедневни напомняния.'
+} = Astro.props;
+---
+
+<section class="signup" aria-labelledby="signup-title">
+  <div>
+    <p class="lab">Бюлетин</p>
+    <h2 id="signup-title">{title}</h2>
+    <p>{text}</p>
+  </div>
+  <form data-newsletter>
+    <div class="field">
+      <input
+        type="email"
+        name="email"
+        placeholder="Вашият имейл"
+        aria-label="Вашият имейл"
+        autocomplete="email"
+        required
+      />
+      <button type="submit">Абонирай се</button>
+    </div>
+    <p class="note">С натискането се съгласявате с <a href="/poveritelnost/">политиката за поверителност</a>. Може да се отпишете по всяко време.</p>
+    <p class="ok" data-newsletter-ok aria-live="polite" hidden>Благодарим. Очаквайте първото писмо в петък.</p>
+  </form>
+</section>

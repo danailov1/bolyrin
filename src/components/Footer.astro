@@ -1,0 +1,47 @@
+---
+import { site } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <a class="brand" href="/">{site.name}</a>
+      <p class="tagline">{site.tagline}. Издание за стил, занаят и добре изживяно време.</p>
+      <p class="tagline">{site.issueNumber} · {site.issue}</p>
+    </div>
+    <div>
+      <h3>Рубрики</h3>
+      <a href="/category/stil/">Стил</a>
+      <a href="/category/chasovnitsi/">Часовници</a>
+      <a href="/category/avtomobili/">Автомобили</a>
+      <a href="/category/patuvania/">Пътувания</a>
+      <a href="/category/interier/">Интериор</a>
+      <a href="/category/gastronomia/">Гастрономия</a>
+    </div>
+    <div>
+      <h3>Списанието</h3>
+      <a href="/latest/">Последни материали</a>
+      <a href="/category/kultura/">Култура</a>
+      <a href="/category/nasledstvo/">Наследство</a>
+      <a href="/category/etiket/">Етикет</a>
+      <a href="/search/">Търсене</a>
+      <a href="/poveritelnost/">Поверителност</a>
+      <a href="/krediti/">Кредити на снимките</a>
+      <a href="/komponenti/">Компоненти</a>
+    </div>
+    <div>
+      <h3>Клуб Болярин</h3>
+      <a href="/klub/">Членство</a>
+      <a href="/klub/#izdania">Изданията</a>
+      <a href="/klub/#vuprosi">Въпроси</a>
+      <a href={`mailto:${site.clubEmail}`}>Пишете ни</a>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© {year} Болярин. Всички права запазени.</span>
+    <span>Изработено с внимание в София.</span>
+    <a href="/komponenti/">Компоненти</a>
+  </div>
+</footer>

@@ -1,0 +1,107 @@
+---
+import { getArticles, articleUrl, formatLongDate } from '../lib/articles';
+import { categories, nav, site } from '../data/site';
+import Placeholder from './Placeholder.astro';
+
+const articles = await getArticles();
+const latest = articles.slice(0, 6);
+const lifeSlugs = ['kultura', 'etiket', 'hora', 'nasledstvo'];
+const lifeCategories = categories.filter((category) => lifeSlugs.includes(category.slug));
+const lifeArticles = articles
+  .filter((article) => lifeSlugs.includes(article.data.category))
+  .slice(0, 4);
+const feature = lifeArticles[0] ?? latest[0];
+const today = formatLongDate(new Date());
+const path = Astro.url.pathname;
+const isHome = path === '/';
+
+function isActive(href: string): boolean {
+  if (href === '/latest/') return path.startsWith('/latest');
+  return path.startsWith(href);
+}
+---
+
+<header class="site-header">
+  <div class="top">
+    <p class="date">{today}</p>
+    {
+      isHome ? (
+        <h1 class="logo"><a href="/">{site.name}</a></h1>
+      ) : (
+        <p class="logo"><a href="/">{site.name}</a></p>
+      )
+    }
+    <div class="tools">
+      <button id="theme" type="button" aria-label="Смени темата" title="Светла / тъмна тема">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"></circle>
+          <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none"></path>
+        </svg>
+      </button>
+      <a href="/search/" aria-label="Търсене" title="Търсене">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"></circle>
+          <path d="M16 16l5 5"></path>
+        </svg>
+      </a>
+      <a class="sub" href="/klub/">Абонамент</a>
+    </div>
+  </div>
+
+  <nav class="mainnav" aria-label="Рубрики">
+    <ul class="nav-list">
+      {
+        nav.map((item) => (
+          <li class:list={[{ has: 'children' in item }]}>
+            <a
+              href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+            {'children' in item && (
+              <div class="mega">
+                <div class="side">
+                  {lifeCategories.map((category) => (
+                    <a href={`/category/${category.slug}/`}>{category.label}</a>
+                  ))}
+                </div>
+                <div>
+                  <div class="sec">
+                    <h2>Живот и култура</h2>
+                    <a class="tlink" href="/category/kultura/">
+                      Всички
+                    </a>
+                  </div>
+                  <ul>
+                    {lifeArticles.map((article) => (
+                      <li>
+                        <a class="ulink" href={articleUrl(article)}>
+                          {article.data.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {
+                  feature && (
+                    <a class="mega-feature" href={articleUrl(feature)}>
+                      <Placeholder
+                        note={feature.data.heroNote}
+                        alt={feature.data.heroAlt}
+                        src={feature.data.heroSrc}
+                        ratio="4 / 3"
+                        showCredit={false}
+                      />
+                      <span class="cap">{feature.data.title}</span>
+                    </a>
+                  )
+                }
+              </div>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

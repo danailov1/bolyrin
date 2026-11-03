@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+  href?: string;
+  linkLabel?: string;
+}
+
+const { title, href, linkLabel = 'Всички материали' } = Astro.props;
+---
+
+<div class="sec">
+  <h2>{title}</h2>
+  {href && <a class="tlink" href={href}>{linkLabel}</a>}
+</div>

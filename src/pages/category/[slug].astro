@@ -1,0 +1,54 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Chips from '../../components/Chips.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { getArticles, materialsLabel, type Article } from '../../lib/articles';
+import { categories, type Category } from '../../data/site';
+
+interface Props {
+  category: Category;
+  articles: Article[];
+}
+
+export async function getStaticPaths() {
+  const all = await getArticles();
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+    props: {
+      category,
+      articles: all.filter((article) => article.data.category === category.slug)
+    }
+  }));
+}
+
+const { category, articles } = Astro.props;
+---
+
+<Base title={category.label} description={category.description}>
+  <div class="pad">
+    <header class="page-head">
+      <p class="lab">Рубрика</p>
+      <h1>{category.label}</h1>
+      <p class="dek">{category.description}</p>
+      <p class="meta">{materialsLabel(articles.length)}</p>
+      <Chips current={category.slug} />
+    </header>
+
+    <section class="archive" aria-label={`Материали в рубрика ${category.label}`}>
+      {
+        articles.length > 0 ? (
+          <div class="archive-grid">
+            {articles.map((article) => (
+              <ArticleCard article={article} showDek />
+            ))}
+          </div>
+        ) : (
+          <p class="empty">Още няма публикувани материали в тази рубрика.</p>
+        )
+      }
+    </section>
+
+    <Newsletter />
+  </div>
+</Base>

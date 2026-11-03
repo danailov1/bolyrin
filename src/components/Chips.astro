@@ -1,0 +1,25 @@
+---
+import { categories } from '../data/site';
+
+interface Props {
+  current?: string;
+  allHref?: string;
+  allLabel?: string;
+}
+
+const { current, allHref = '/latest/', allLabel = 'Всички' } = Astro.props;
+---
+
+<div class="chips-row">
+  <a class:list={['chip', { on: !current }]} href={allHref}>{allLabel}</a>
+  {
+    categories.map((category) => (
+      <a
+        class:list={['chip', { on: current === category.slug }]}
+        href={`/category/${category.slug}/`}
+      >
+        {category.short}
+      </a>
+    ))
+  }
+</div>

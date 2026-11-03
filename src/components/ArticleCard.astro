@@ -1,0 +1,124 @@
+---
+import Placeholder from './Placeholder.astro';
+import { articleUrl, formatDate, readingMinutes, type Article } from '../lib/articles';
+import { getCategory } from '../data/site';
+
+interface Props {
+  article: Article;
+  variant?: 'col' | 'row' | 'split' | 'over';
+  showDek?: boolean;
+  eager?: boolean;
+}
+
+const { article, variant = 'col', showDek = false, eager = false } = Astro.props;
+const category = getCategory(article.data.category);
+const href = articleUrl(article);
+const label = article.data.badge ?? category.label;
+---
+
+{
+  variant === 'col' && (
+    <article class="c-col">
+      <a href={href} tabindex="-1" aria-hidden="true">
+        <Placeholder
+          note={article.data.heroNote}
+          alt={article.data.heroAlt}
+          src={article.data.heroSrc}
+          ratio="4 / 3"
+          eager={eager}
+          showCredit={false}
+        />
+      </a>
+      <p class="lab">{label}</p>
+      <h3>
+        <a class="ulink" href={href}>
+          {article.data.title}
+        </a>
+      </h3>
+      {showDek && <p class="dek">{article.data.standfirst}</p>}
+      <p class="meta">
+        {formatDate(article.data.publishedAt)} · {readingMinutes(article)} мин четене
+      </p>
+    </article>
+  )
+}
+
+{
+  variant === 'row' && (
+    <article class="c-row">
+      <div>
+        <p class="lab">{label}</p>
+        <h3>
+          <a class="ulink" href={href}>
+            {article.data.title}
+          </a>
+        </h3>
+        {showDek && <p class="dek">{article.data.standfirst}</p>}
+        <p class="meta">{readingMinutes(article)} минути четене</p>
+      </div>
+      <a href={href} tabindex="-1" aria-hidden="true">
+        <Placeholder
+          note={article.data.heroNote}
+          alt={article.data.heroAlt}
+          src={article.data.heroSrc}
+          ratio="1 / 1"
+          showCredit={false}
+        />
+      </a>
+    </article>
+  )
+}
+
+{
+  variant === 'split' && (
+    <article class="c-split">
+      <a href={href} tabindex="-1" aria-hidden="true">
+        <Placeholder
+          note={article.data.heroNote}
+          alt={article.data.heroAlt}
+          src={article.data.heroSrc}
+          ratio="4 / 3"
+          eager={eager}
+          showCredit={false}
+        />
+      </a>
+      <div class="tx">
+        <p class="lab">{label}</p>
+        <h3>
+          <a class="ulink" href={href}>
+            {article.data.title}
+          </a>
+        </h3>
+        <p class="s">{article.data.standfirst}</p>
+        <p class="meta">
+          {formatDate(article.data.publishedAt)} · {readingMinutes(article)} мин четене
+        </p>
+      </div>
+    </article>
+  )
+}
+
+{
+  variant === 'over' && (
+    <article class="c-over">
+      <a href={href} tabindex="-1" aria-hidden="true">
+        <Placeholder
+          note={article.data.heroNote}
+          alt={article.data.heroAlt}
+          src={article.data.heroSrc}
+          ratio="2.15 / 1"
+          eager={eager}
+          showCredit={false}
+        />
+      </a>
+      <div class="box">
+        <p class="lab">{label}</p>
+        <h2>
+          <a class="ulink" href={href}>
+            {article.data.title}
+          </a>
+        </h2>
+      </div>
+    </article>
+  )
+}

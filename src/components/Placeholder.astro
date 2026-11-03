@@ -1,0 +1,55 @@
+---
+import PhotoCredit from './PhotoCredit.astro';
+
+interface Props {
+  note: string;
+  alt?: string;
+  ratio?: string;
+  caption?: string;
+  credit?: string;
+  src?: string;
+  className?: string;
+  eager?: boolean;
+  showCredit?: boolean;
+}
+
+const {
+  note,
+  alt = note,
+  ratio = '4 / 3',
+  caption,
+  credit,
+  src,
+  className,
+  eager = false,
+  showCredit = true
+} = Astro.props;
+---
+
+<figure class:list={['media', className]}>
+  {
+    src ? (
+      <img
+        src={src}
+        alt={alt}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={eager ? 'high' : undefined}
+        style={`--ratio:${ratio}`}
+      />
+    ) : (
+      <div class="ph" role="img" aria-label={alt} style={`--ratio:${ratio}`}>
+        <span>{note}</span>
+      </div>
+    )
+  }
+  {
+    showCredit && (caption || credit || src) && (
+      <figcaption>
+        {caption}
+        {caption && (credit || src) ? ' ' : null}
+        <PhotoCredit src={src} credit={credit} />
+      </figcaption>
+    )
+  }
+</figure>

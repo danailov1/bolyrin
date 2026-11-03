@@ -1,0 +1,121 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getArticles, materialsLabel } from '../lib/articles';
+import { categories, getCategory } from '../data/site';
+
+const articles = await getArticles();
+---
+
+<Base title="Търсене" description="Търсене в материалите на Болярин.">
+  <div class="pad">
+    <header class="page-head">
+      <p class="lab">Търсене</p>
+      <h1>Намерете нещо, което си струва.</h1>
+      <p class="dek">
+        Търсете по заглавие, рубрика, ключова дума или име. Резултатите се обновяват, докато пишете.
+      </p>
+    </header>
+
+    <div class="search-panel">
+      <form class="field" role="search" data-search-form>
+        <input
+          type="search"
+          placeholder="Търси в Болярин"
+          aria-label="Търсене в Болярин"
+          data-search-input
+        />
+        <button type="submit">Търси</button>
+      </form>
+      <p class="results-meta" data-results-count>{materialsLabel(articles.length)}</p>
+    </div>
+
+    <div class="chips-row" aria-label="Филтър по рубрика">
+      <button class="chip on" type="button" data-filter="all">Всички</button>
+      {
+        categories.map((category) => (
+          <button class="chip" type="button" data-filter={category.slug}>
+            {category.short}
+          </button>
+        ))
+      }
+    </div>
+
+    <section class="archive" aria-label="Резултати от търсенето">
+      <p class="no-results" data-no-results hidden>
+        Няма намерени материали. Опитайте с друга дума или изберете друга рубрика.
+      </p>
+      <div class="archive-grid" data-results>
+        {
+          articles.map((article) => {
+            const category = getCategory(article.data.category);
+            const haystack = [
+              article.data.title,
+              article.data.standfirst,
+              category.label,
+              article.data.author,
+              ...article.data.tags
+            ]
+              .join(' ')
+              .toLowerCase();
+            return (
+              <div class="search-item" data-search={haystack} data-category={article.data.category}>
+                <ArticleCard article={article} showDek />
+              </div>
+            );
+          })
+        }
+      </div>
+    </section>
+  </div>
+
+  <Fragment slot="scripts">
+    <script is:inline>
+      (function () {
+        var form = document.querySelector('[data-search-form]');
+        var input = document.querySelector('[data-search-input]');
+        var items = Array.prototype.slice.call(document.querySelectorAll('.search-item'));
+        var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
+        var counter = document.querySelector('[data-results-count]');
+        var empty = document.querySelector('[data-no-results]');
+        var active = 'all';
+
+        function apply() {
+          var query = (input && input.value ? input.value : '').trim().toLowerCase();
+          var shown = 0;
+
+          items.forEach(function (item) {
+            var matchesCategory = active === 'all' || item.getAttribute('data-category') === active;
+            var matchesQuery = !query || item.getAttribute('data-search').indexOf(query) !== -1;
+            var visible = matchesCategory && matchesQuery;
+            item.hidden = !visible;
+            if (visible) shown += 1;
+          });
+
+          var noun = shown === 1 ? ' материал' : ' материала';
+          if (counter) counter.textContent = shown + noun;
+          if (empty) empty.hidden = shown !== 0;
+        }
+
+        if (form) {
+          form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            apply();
+          });
+        }
+
+        if (input) input.addEventListener('input', apply);
+
+        buttons.forEach(function (button) {
+          button.addEventListener('click', function () {
+            active = button.getAttribute('data-filter');
+            buttons.forEach(function (other) {
+              other.classList.toggle('on', other === button);
+            });
+            apply();
+          });
+        });
+      })();
+    </script>
+  </Fragment>
+</Base>

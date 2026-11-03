@@ -1,0 +1,130 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = site.description,
+  image,
+  type = 'website',
+  noindex = false
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const pageTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
+const ogImage = image ? new URL(image, Astro.site) : undefined;
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  url: site.url,
+  description: site.description
+};
+---
+
+<!doctype html>
+<html lang="bg" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.name} />
+    <meta name="application-name" content={site.name} />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="format-detection" content="telephone=no, address=no, email=no" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Golos+Text:wght@400;600;700&family=Noto+Serif+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta property="og:locale" content="bg_BG" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('bolyarin-theme');
+          if (saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', '#0b0b0b');
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(organization)}></script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Към съдържанието</a>
+    <Header />
+    <main id="main" class="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var button = document.getElementById('theme');
+        if (button) {
+          button.setAttribute(
+            'aria-pressed',
+            root.getAttribute('data-theme') === 'dark' ? 'true' : 'false'
+          );
+          button.addEventListener('click', function () {
+            var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', next);
+            button.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+            var themeMeta = document.querySelector('meta[name="theme-color"]');
+            if (themeMeta) themeMeta.setAttribute('content', next === 'dark' ? '#0b0b0b' : '#ffffff');
+            try {
+              localStorage.setItem('bolyarin-theme', next);
+            } catch (error) {}
+          });
+        }
+
+        document.querySelectorAll('[data-newsletter]').forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (!form.checkValidity()) {
+              form.reportValidity();
+              return;
+            }
+            var field = form.querySelector('.field');
+            var ok = form.querySelector('[data-newsletter-ok]');
+            if (field) field.setAttribute('hidden', '');
+            if (ok) ok.hidden = false;
+          });
+        });
+      })();
+    </script>
+    <slot name="scripts" />
+  </body>
+</html>

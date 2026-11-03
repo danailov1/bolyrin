@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Chips from '../../components/Chips.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { getArticles, materialsLabel } from '../../lib/articles';
+import { site } from '../../data/site';
+
+const articles = await getArticles();
+---
+
+<Base
+  title="Последни материали"
+  description="Всички материали в Болярин — стил, часовници, автомобили, пътувания, интериор, гастрономия и култура."
+>
+  <div class="pad">
+    <header class="page-head">
+      <p class="lab">Архив</p>
+      <h1>Последни материали</h1>
+      <p class="dek">
+        Стил, занаят и добре изживяно време. Всичко, което сме публикували, подредено по дата.
+      </p>
+      <p class="meta">{materialsLabel(articles.length)} · {site.issueNumber}, {site.issue}</p>
+      <Chips />
+    </header>
+
+    <section class="archive" aria-label="Всички материали">
+      <div class="archive-grid">
+        {articles.map((article) => <ArticleCard article={article} showDek />)}
+      </div>
+    </section>
+
+    <Newsletter />
+  </div>
+</Base>

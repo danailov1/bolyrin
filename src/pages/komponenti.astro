@@ -1,0 +1,173 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Placeholder from '../components/Placeholder.astro';
+import PullQuote from '../components/PullQuote.astro';
+import Promo from '../components/Promo.astro';
+import { getArticles, pickArticle } from '../lib/articles';
+
+const all = await getArticles();
+const sample = pickArticle(all, 'mehanichnoto-sarce');
+const sampleRow = pickArticle(all, 'tamnosinoto-sako');
+const sampleSplit = pickArticle(all, 'pet-veshti-za-sezona');
+---
+
+<Base
+  title="Компоненти"
+  description="Речникът на Болярин: класове, елементи и правила за нови страници."
+  noindex
+>
+  <div class="pad sheet">
+    <header class="sheet-head">
+      <p class="lab">Дизайн система</p>
+      <h1>Компоненти</h1>
+      <p class="dek">
+        Всеки елемент е един CSS клас. Нова страница се строи, като се комбинират. Снимките са
+        placeholder-и с бележка какво трябва да бъде заснето.
+      </p>
+    </header>
+
+    <div class="spec">
+      <h3>Цветове<small>Бяло е основата. Тъмната тема е избор на читателя.</small></h3>
+      <div class="swatches">
+        <div class="sw"><i style="background:var(--bg)"></i>Фон</div>
+        <div class="sw"><i style="background:var(--ink)"></i>Текст</div>
+        <div class="sw"><i style="background:var(--soft)"></i>Наведен</div>
+        <div class="sw"><i style="background:var(--ph)"></i>Снимка</div>
+        <div class="sw"><i style="background:var(--mute)"></i>Втори текст</div>
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Шрифтове<small>Oswald · Noto Serif Display · Golos Text</small></h3>
+      <div>
+        <div style="font-family:var(--head);font-weight:600;font-size:52px;text-transform:uppercase;line-height:1">
+          Болярин
+        </div>
+        <div style="font-size:36px;line-height:1.2;margin:14px 0">
+          Оксфордската обувка живее два века
+        </div>
+        <div class="lab" style="margin:0">Етикет, навигация, бутони</div>
+        <div class="meta" style="margin-top:8px">Мета ред · 24 октомври 2026 · 9 мин четене</div>
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Етикет и мета<small>.lab · .meta</small></h3>
+      <div>
+        <p class="lab">Часовници</p>
+        <p class="meta">преди 2 дни · 9 минути четене</p>
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Бутони и връзки<small>.btn · .btn.line · .btn.pill · .tlink · .ulink</small></h3>
+      <div class="row">
+        <a class="btn" href="#">Абонамент</a>
+        <a class="btn line" href="#">Прочети</a>
+        <a class="btn pill" href="#">Влез в клуба</a>
+        <a class="tlink" href="#">Всички материали</a>
+        <a class="ulink" href="#">Заглавие с подчертаване</a>
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Заглавие на секция<small>.sec</small></h3>
+      <div class="spec-demo wide">
+        <SectionHeader title="Наследство" href="#" />
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Чипове и търсене<small>.chip · .field</small></h3>
+      <div class="spec-demo wide">
+        <div class="chips-row" style="margin-top:0;margin-bottom:18px">
+          <span class="chip on">Всички</span>
+          <span class="chip">Стил</span>
+          <span class="chip">Часовници</span>
+          <span class="chip">Автомобили</span>
+        </div>
+        <div class="field">
+          <input placeholder="Търси в Болярин" aria-label="Търсене" />
+          <button type="button">Търси</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Карта: колона<small>.c-col</small></h3>
+      <div class="spec-demo" style="max-width:380px">
+        <ArticleCard article={sample} showDek />
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Карта: редица<small>.c-row</small></h3>
+      <div class="spec-demo">
+        <ArticleCard article={sampleRow} variant="row" showDek />
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Карта: разделена<small>.c-split</small></h3>
+      <div class="spec-demo wide">
+        <ArticleCard article={sampleSplit} variant="split" />
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Карта: наслагване<small>.c-over</small></h3>
+      <div class="spec-demo wide">
+        <ArticleCard article={sample} variant="over" />
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Цитат<small>.quote</small></h3>
+      <div class="spec-demo wide">
+        <PullQuote source="Майстор шивач, София">
+          „Костюмът не се бърза. Бърза се само това, което не си струва.“
+        </PullQuote>
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Промо блок<small>.promo</small></h3>
+      <div style="max-width:320px">
+        <Promo />
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Снимка<small>.ph · Placeholder</small></h3>
+      <div class="spec-demo wide">
+        <Placeholder
+          note="Примерна бележка към фотографа: обект, кадър, светлина, фон и какво да не влиза в снимката."
+          alt="Примерен placeholder за снимка"
+          ratio="16 / 9"
+          caption="Текст под снимката. Кредитът се добавя отделно."
+        />
+      </div>
+    </div>
+
+    <div class="spec">
+      <h3>Как се добавя страница<small>Правилото е едно: комбинирайте класовете.</small></h3>
+      <div class="spec-demo wide">
+        <p style="margin-top:0">
+          Нова статия: създайте <code>.mdx</code> файл в <code>src/content/articles</code>, попълнете
+          frontmatter и използвайте <code>&lt;Placeholder /&gt;</code> за снимките. Страницата се
+          генерира автоматично.
+        </p>
+        <p>
+          Нова рубрика: добавете запис в <code>src/data/site.ts</code>. Навигацията, чиповете и
+          архивът се обновяват сами.
+        </p>
+        <p style="margin-bottom:0">
+          Пълният наръчник е в <code>README.md</code>, а бележките за всяка снимка — в
+          <code>IMAGE-INSTRUCTIONS.md</code>.
+        </p>
+      </div>
+    </div>
+  </div>
+</Base>

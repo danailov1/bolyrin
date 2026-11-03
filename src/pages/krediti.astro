@@ -1,0 +1,130 @@
+---
+import Base from '../layouts/Base.astro';
+import { imageCredits } from '../data/image-credits';
+
+const items = Object.entries(imageCredits).sort(([, a], [, b]) => a.title.localeCompare(b.title));
+const licenses = [...new Set(items.map(([, meta]) => meta.license))].sort();
+---
+
+<Base
+  title="Кредити на снимките"
+  description="Автори, лицензи и източници на всички снимки, използвани в Болярин."
+>
+  <div class="pad">
+    <header class="page-head">
+      <p class="lab">Кредити</p>
+      <h1>Снимките в Болярин</h1>
+      <p class="dek">
+        Всички снимки в това издание са от Wikimedia Commons и са под свободен лиценз. По-долу
+        е всеки кадър с автор, лиценз и връзка към оригинала.
+      </p>
+    </header>
+
+    <article class="art-body" style="margin-top:36px">
+      <p>
+        Снимките са преоразмерени и изрязани за нуждите на сайта, без други промени по
+        съдържанието. Обработените версии се разпространяват под същия лиценз като оригинала.
+        Ако лицензът изисква посочване на автора, той е посочен под всяка снимка и в списъка
+        по-долу.
+      </p>
+      <p>
+        Използвани лицензи: {licenses.join(', ')}. Пълните текстове са достъпни на страницата на
+        всеки оригинал и на <a href="https://creativecommons.org/licenses/" target="_blank" rel="noopener noreferrer">creativecommons.org</a>.
+      </p>
+      <p>
+        Лицензът покрива авторското право, но не и правата на личността. Кадрите се използват в
+        редакционен контекст; ако възнамерявате да ги използвате повторно за реклама или друг
+        комерсиален продукт, проверете дали за разпознаваемите лица и марки не е нужен отделен
+        release.
+      </p>
+    </article>
+
+    <section class="credit-grid" aria-label="Списък на снимките">
+      {
+        items.map(([src, meta]) => (
+          <figure class="credit-card">
+            <img src={src} alt="" loading="lazy" decoding="async" />
+            <figcaption>
+              <strong>{meta.title.replace(/^File:/, '')}</strong>
+              <span>{meta.author}</span>
+              <span class="credit-card__license">
+                {meta.licenseUrl ? (
+                  <a href={meta.licenseUrl} target="_blank" rel="noopener noreferrer">
+                    {meta.license}
+                  </a>
+                ) : (
+                  meta.license
+                )}
+              </span>
+              <a href={meta.sourceUrl} target="_blank" rel="noopener noreferrer">
+                Оригинал в Wikimedia Commons
+              </a>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </section>
+  </div>
+</Base>
+
+<style>
+  .credit-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px 22px;
+    margin: 52px 0 80px;
+  }
+
+  .credit-card {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .credit-card img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--ph);
+  }
+
+  .credit-card figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: var(--ui);
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--mute);
+  }
+
+  .credit-card strong {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .credit-card a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .credit-card__license {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .credit-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .credit-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
